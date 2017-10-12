@@ -2,7 +2,7 @@
 using UnityEngine.Networking;
 using System.Collections;
 
-public class Enemy_Base : NetworkBehaviour
+public class EnemyBase : NetworkBehaviour
 {
     // Class Constants ////////////////////////////////////////////////////////
 

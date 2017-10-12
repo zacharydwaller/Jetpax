@@ -2,7 +2,7 @@
 using UnityEngine.Networking;
 using System.Collections;
 
-public class Spawn_Area : NetworkBehaviour
+public class SpawnArea : NetworkBehaviour
 {
     // Class Constants ////////////////////////////////////////////////////////
 
@@ -84,7 +84,7 @@ public class Spawn_Area : NetworkBehaviour
 
             if (objectType == Type.Enemy)
             {
-                spawnedObject.GetComponent<Enemy_Base>().isFacingLeft = faceLeft;
+                spawnedObject.GetComponent<EnemyBase>().isFacingLeft = faceLeft;
             }
 
             NetworkServer.Spawn(spawnedObject);

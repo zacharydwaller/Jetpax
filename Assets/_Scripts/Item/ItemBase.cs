@@ -2,7 +2,7 @@
 using UnityEngine.Networking;
 using System.Collections;
 
-public class Item_Base : NetworkBehaviour
+public class ItemBase : NetworkBehaviour
 {
     // Class Constants ////////////////////////////////////////////////////////
 
@@ -36,7 +36,7 @@ public class Item_Base : NetworkBehaviour
     {
         if (!isServer) return;
 
-        Player_Controller parent = newParent.GetComponent<Player_Controller>();
+        PlayerController parent = newParent.GetComponent<PlayerController>();
         GetComponent<Rigidbody2D>().isKinematic = true;
         GetComponent<BoxCollider2D>().isTrigger = true;
         transform.parent = newParent.transform;

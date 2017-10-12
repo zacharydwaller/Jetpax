@@ -2,7 +2,7 @@
 using UnityEngine.Networking;
 using System.Collections;
 
-public class Ship_Base : NetworkBehaviour
+public class ShipBase : NetworkBehaviour
 {
     // Class Constants ////////////////////////////////////////////////////////
 
@@ -13,10 +13,10 @@ public class Ship_Base : NetworkBehaviour
     // Class Variables ////////////////////////////////////////////////////////
 
     // Game
-    private Game_Manager gameManager;
+    private GameManager gameManager;
 
     // Player
-    public Player_Controller owner;
+    public PlayerController owner;
 
     // Build
     public int componentsBuilt = 0;
@@ -31,7 +31,7 @@ public class Ship_Base : NetworkBehaviour
 
     void Start()
     {
-        gameManager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<Game_Manager>();
+        gameManager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();
 
         shipComponents = new ArrayList();
         shipComponents.Add(this.gameObject);
@@ -44,7 +44,7 @@ public class Ship_Base : NetworkBehaviour
 
         if (componentsBuilt == COMPONENTS_UNTIL_FUEL)
         {
-            gameManager.StartSpawningFuel();
+            gameManager.CmdStartSpawningFuel();
             DimComponents();
         }
     }
@@ -58,7 +58,7 @@ public class Ship_Base : NetworkBehaviour
         if (componentsFueled == FUEL_UNTIL_COMPLETE)
         {
             // Ship fly away, add score
-            gameManager.StopSpawningFuel();
+            gameManager.CmdStopSpawningFuel();
             owner.CmdAddScore(SCORE_FOR_COMPLETION);
             FlyAway();
 

@@ -13,7 +13,7 @@ public class Bullet : NetworkBehaviour
 
     // Class Variables ////////////////////////////////////////////////////////
 
-    public Player_Controller owner;
+    public PlayerController owner;
     public bool isFacingLeft;
     public int damage;
 
@@ -40,7 +40,7 @@ public class Bullet : NetworkBehaviour
         }
         else if (otherTag == "Enemy")
         {
-            owner.CmdAddScore(other.GetComponent<Enemy_Base>().scoreReward);
+            owner.CmdAddScore(other.GetComponent<EnemyBase>().scoreReward);
             other.SendMessage("Die");
             Die();
         }
@@ -52,9 +52,9 @@ public class Bullet : NetworkBehaviour
         else if
             (
               otherTag == "Player"
-              && other.gameObject.GetComponent<Player_Controller>() != owner
-              && GameObject.FindGameObjectWithTag("GameManager").GetComponent<Game_Manager>().isCompetitiveGame
-              && other.GetComponent<Player_Controller>().isInvincible == false
+              && other.gameObject.GetComponent<PlayerController>() != owner
+              && GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>().isCompetitiveGame
+              && other.GetComponent<PlayerController>().isInvincible == false
             )
         {
             other.SendMessage("TakeDamage", damage);

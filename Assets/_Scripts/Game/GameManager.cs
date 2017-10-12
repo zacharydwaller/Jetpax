@@ -3,7 +3,7 @@ using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
 using System.Collections;
 
-public class Game_Manager : NetworkBehaviour
+public class GameManager : NetworkBehaviour
 {
     // Class Constants ////////////////////////////////////////////////////////
 
@@ -20,14 +20,11 @@ public class Game_Manager : NetworkBehaviour
     // Class Variables ////////////////////////////////////////////////////////
 
     // Game Management
-    [SyncVar]
     public bool gameStarted = false;
 
     // Players
     public ArrayList players;
-    [SyncVar]
     public int numPlayers = 0;
-    [SyncVar]
     public bool isCompetitiveGame = true;
 
     private GameObject shipReference;
@@ -39,10 +36,7 @@ public class Game_Manager : NetworkBehaviour
     public GameObject itemSpawner;
     public GameObject[] enemySpawners;
 
-    [SyncVar]
     public int shipsBuilt;
-
-    private NetworkManager networkManager;
 
     // Class Methods //////////////////////////////////////////////////////////
 
@@ -54,10 +48,10 @@ public class Game_Manager : NetworkBehaviour
 
     void Start()
     {
+        players = new ArrayList();
+
         shipReference = Resources.Load<GameObject>(OBJ_SHIP);
         fuelReference = Resources.Load<GameObject>(OBJ_FUEL);
-
-        networkManager = GetComponentInChildren<NetworkManager>();
     }
 
     private void Update()
@@ -69,21 +63,21 @@ public class Game_Manager : NetworkBehaviour
         {
             itemSpawner.SendMessage("StopSpawning");
             enemySpawners[0].SendMessage("StopSpawning");
-            enemySpawners[0].SendMessage("StopSpawning");
+            enemySpawners[1].SendMessage("StopSpawning");
         }
     }
 
     // Start Game
-    [Command]
-    public void CmdStartGame()
+    [Server]
+    public void StartGame()
     {
+        if(!isServer) return;
+
         gameStarted = true;
 
         itemSpawner = GameObject.FindGameObjectWithTag("ItemSpawner");
         enemySpawners = GameObject.FindGameObjectsWithTag("EnemySpawner");
         shipSpawnPoints = GameObject.FindGameObjectsWithTag("ShipSpawn");
-
-        players = new ArrayList();
 
         itemSpawner.SendMessage("StartSpawning");
         enemySpawners[0].SendMessage("StartSpawning");
@@ -93,6 +87,11 @@ public class Game_Manager : NetworkBehaviour
     [Command]
     public void CmdAddPlayer(GameObject player)
     {
+        if(numPlayers == 0)
+        {
+            StartGame();
+        }
+
         numPlayers++;
         players.Add(player);
     }
@@ -109,6 +108,7 @@ public class Game_Manager : NetworkBehaviour
         }
     }
 
+    [Server]
     public void StopGame()
     {
         if (!isServer) return;
@@ -120,11 +120,11 @@ public class Game_Manager : NetworkBehaviour
     [Command]
     public void CmdCreateShip(GameObject ownerObj)
     {
-        Player_Controller owner = ownerObj.GetComponent<Player_Controller>();
+        PlayerController owner = ownerObj.GetComponent<PlayerController>();
         GameObject newShip = GameObject.Instantiate(shipReference);
         
-        Ship_Base shipBase = newShip.GetComponent<Ship_Base>();
-        Item_Base itemBase = newShip.GetComponent<Item_Base>();
+        ShipBase shipBase = newShip.GetComponent<ShipBase>();
+        ItemBase itemBase = newShip.GetComponent<ItemBase>();
 
         // Player
         newShip.transform.position = shipSpawnPoints[owner.playerNumber - 1].transform.position;
@@ -143,10 +143,9 @@ public class Game_Manager : NetworkBehaviour
         owner.ownedShip = newShip;
     }
 
-    public void StartSpawningFuel()
+    [Command]
+    public void CmdStartSpawningFuel()
     {
-        if (!isServer) return;
-
         shipsBuilt++;
 
         // If all players built their ships, only spawn fuel
@@ -167,10 +166,9 @@ public class Game_Manager : NetworkBehaviour
         }
     }
 
-    public void StopSpawningFuel()
+    [Command]
+    public void CmdStopSpawningFuel()
     {
-        if (!isServer) return;
-
         shipsBuilt--;
 
         GameObject[] newItems = new GameObject[2];

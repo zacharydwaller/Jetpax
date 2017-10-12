@@ -1,10 +1,11 @@
 ﻿using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.Networking;
 using System.Collections;
 
 public class MenuButtons : MonoBehaviour
 {
-    public Game_Manager gameManager;
+    public GameManager gameManager;
 
     // Change number of players
     public void setNumPlayers(float newNumPlayers)
@@ -26,8 +27,8 @@ public class MenuButtons : MonoBehaviour
 
     public void SinglePlayer()
     {
-        SceneManager.LoadScene("Level1");
-        // network manager host lan game
+        SceneManager.LoadScene("Level1", LoadSceneMode.Single);
+        NetworkManager.singleton.StartHost();
     }
 
     // Exit game

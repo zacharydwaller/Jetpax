@@ -9,7 +9,7 @@ using System.Collections;
  * Speed: 5.0
  */
 
-public class Enemy_Squid : NetworkBehaviour
+public class EnemySquid : NetworkBehaviour
 {
     // Class Constants ////////////////////////////////////////////////////////
 
@@ -22,14 +22,14 @@ public class Enemy_Squid : NetworkBehaviour
     // Class Variables ////////////////////////////////////////////////////////
 
     // Components
-    private Enemy_Base parent;
+    private EnemyBase parent;
     private Rigidbody2D rgb;
 
     // Class Methods //////////////////////////////////////////////////////////
 
     private void Start()
     {
-        parent = GetComponent<Enemy_Base>();
+        parent = GetComponent<EnemyBase>();
         rgb = GetComponent<Rigidbody2D>();
 
         rgb.gravityScale = 0.0f;

@@ -4,7 +4,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.Networking;
 using System.Collections;
 
-public class Player_Controller : NetworkBehaviour
+public class PlayerController : NetworkBehaviour
 {
     // Class Constants ////////////////////////////////////////////////////////
 
@@ -47,10 +47,11 @@ public class Player_Controller : NetworkBehaviour
     // Class Variables ////////////////////////////////////////////////////////
 
     // Game Manager
-    private Game_Manager gameManager;
+    private GameManager gameManager;
 
     // Firing
     private GameObject bulletRef;
+    [SyncVar]
     private bool facingLeft;
     private float nextFire;
     private int numBullets;
@@ -66,7 +67,6 @@ public class Player_Controller : NetworkBehaviour
     // Multiplayer
     [SyncVar]
     public int playerNumber;
-    [SyncVar]
     public int playerHealth;
 
     [SyncVar]
@@ -102,7 +102,7 @@ public class Player_Controller : NetworkBehaviour
     private AudioClip shootSound;
 
     // Components
-    private Rigidbody2D rigidbody;
+    new private Rigidbody2D rigidbody;
     private SpriteRenderer spriteRenderer;
     private AudioSource audioSource;
     private Animator animator;
@@ -306,7 +306,7 @@ public class Player_Controller : NetworkBehaviour
 
         if (
             other.transform.parent != null && isHoldingItem && other.tag == "DropZone"
-            && other.GetComponentInParent<Item_Base>().playerNumber == playerNumber
+            && other.GetComponentInParent<ItemBase>().playerNumber == playerNumber
           )
         {
             heldItem.SendMessage("Drop", other.gameObject);
@@ -323,7 +323,7 @@ public class Player_Controller : NetworkBehaviour
         if (isHoldingItem)
         {
             // Push needed item back onto item queue
-            itemQ = PushQueue(heldItem.GetComponent<Item_Base>().initialTag, itemQ);
+            itemQ = PushQueue(heldItem.GetComponent<ItemBase>().initialTag, itemQ);
             heldItem.SendMessage("Fumble");
             heldItem = null;
             isHoldingItem = false;
@@ -470,7 +470,7 @@ public class Player_Controller : NetworkBehaviour
     public void CmdAddScore(int amount)
     {
         playerScore += amount;
-        scoreText.text = "Score: " + playerScore;
+        //scoreText.text = "Score: " + playerScore;
     }
 
     // Place ScoreBox
@@ -596,12 +596,7 @@ public class Player_Controller : NetworkBehaviour
     {
         if (!isLocalPlayer) return;
 
-        gameManager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<Game_Manager>();
-
-        if(gameManager.gameStarted == false)
-        {
-            gameManager.CmdStartGame();
-        }
+        gameManager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();
 
         // Player Number and Spawn
         spawnPoints = FindObjectsOfType<NetworkStartPosition>();
